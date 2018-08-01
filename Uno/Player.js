@@ -13,6 +13,9 @@ class Player{
       table.color = this.hand[i].color;
       table.colorId = this.hand[i].colorId;
       this.hand.splice(i, 1);
+      //Passar a vez:
+      actualPlayer++;
+      if(actualPlayer >= player.length) actualPlayer = 0;
     }
   }
 

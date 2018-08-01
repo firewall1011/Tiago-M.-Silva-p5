@@ -10,6 +10,7 @@ var actualPlayer = 0;
 
 function setup() {
   createCanvas(400, 600);
+  createP('');
   player.push(new Player());
   player.push(new Player());
   teste = new Card(9, 2, createVector(width/10, height/100+height/1.2));
@@ -20,37 +21,17 @@ function setup() {
 
 function draw() {
   background(200);
+
   showCards();
   if(frameCount % 5 == 0){
     for(let k = player[actualPlayer].hand.length-1; k >= 0; k--){
         player[actualPlayer].playCard(table, k);
     }
   }
-
-
 }
 
 //function PopCard(){}
 
-/*function mouseClicked(){
-  for(let i = player[actualPlayer].hand.length-1; i >= 0; i--){
-    let card = player[actualPlayer].hand[i];
-    if(card.collision()){
-      if(card.figure <= 12){
-        if(card.figure == table.figure || card.color == table.color){
-          playCard(i);
-        }
-        return;
-      }
-      else{
-        playCard(i);
-        return;
-      }
-    }
-    else console.log("didnt make it");
-  }
-  return false;
-}*/
 
 /*function playCard(id){
   table = player[actualPlayer].hand[id];
