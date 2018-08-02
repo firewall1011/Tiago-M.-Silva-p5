@@ -2,6 +2,7 @@ var player = [];
 var table;
 var deck = [];
 var actualPlayer = 0;
+var signal = 1;
 //Criar classe do Jogador
 //Criar funcao de clicar em cartas
 //Criar funcao de checar mesa
@@ -10,38 +11,56 @@ var actualPlayer = 0;
 
 function setup() {
   createCanvas(400, 600);
-  createP('');
+  createP('Feito por Silva, Tiago');
   player.push(new Player());
   player.push(new Player());
-  teste = new Card(9, 2, createVector(width/10, height/100+height/1.2));
+  player.push(new Player());
+  drawB = new Botao(5, 460, 'Draw', 22);
+  passB = new Botao(337, 460, 'Pass', 22);
   createDeck();
   startGame();
 
 }
 
+
 function draw() {
   background(200);
 
   showCards();
-  if(frameCount % 5 == 0){
+
+  if(frameCount % 3 == 0){ //Let players play their card
     for(let k = player[actualPlayer].hand.length-1; k >= 0; k--){
-        player[actualPlayer].playCard(table, k);
+        if(player[actualPlayer].playCard(table, k)) break;
     }
+  }
+  delay(0.65); //Delay to not conflict players turns
+}
+
+function mousePressed(){
+  if( drawB.collision() ){
+    drawCard(actualPlayer);
+  }
+  if( passB.collision() ){
+    passTurn();
   }
 }
 
+function passTurn(){
+  actualPlayer += 1*signal;
+  if(actualPlayer >= player.length) actualPlayer = 0;
+  if(actualPlayer < 0) actualPlayer = player.length-1;
+}
+
+function delay(_i){
+  for(let w = 0; w < _i * 100000000; w++);
+}
 //function PopCard(){}
-
-
-/*function playCard(id){
-  table = player[actualPlayer].hand[id];
-  table.pos = createVector(width/2-table.Rw/2, height/2-table.Rh/2);
-  player[actualPlayer].hand.splice(id, 1);
-}*/
 
 function showCards(){
   showPlayersCards();
   table.show();
+  drawB.show();
+  passB.show();
 }
 
 function showPlayersCards(){
