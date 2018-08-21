@@ -35,7 +35,7 @@ function draw() {
   if( !(inTransition) ){
     showPlayersCards();
 
-    if(frameCount % 1 == 0){ //Let players play their card
+    if(frameCount % 5 == 0){ //Let players play their card
       for(let k = player[actualPlayer].hand.length-1; k >= 0; k--){
           player[actualPlayer].hand[k].expand();
           if(player[actualPlayer].playCard(table, k)) break;
