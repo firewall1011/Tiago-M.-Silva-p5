@@ -6,21 +6,27 @@ var objective;
 var best;
 var generation = 0;
 var counter = 0;
+var deathP = 100;
+var fruit;
 
 function setup() {
   createCanvas(800, 400);
-  objective = createVector(width-20, 0);
+  objective = createVector(width-20, height/2);
   for(let i = 0; i < population; i++){
     ship.push(new Ship(moveset, true));
+    ship[i].initialize_md();
   }
+  let size = createVector(20, 20);
+  let pos = createVector(width-20, height/2);
+  let color = [0, 100, 0];
+  fruit = new Objective(pos, size, color);
   best = ship[0];
+  best.points = 100000000;
 }
 
 function draw() {
   background(150, 20, 20);
-  noStroke();
-  fill(50, 150, 50);
-  rect(width-20, 0, 20, height);
+  fruit.show();
   for(let i = 0; i < ship.length; i++){
     ship[i].move();
     ship[i].show();
@@ -40,21 +46,19 @@ function reset(){
 }
 
 function generationCrossOver(){
-  let at_best = findBest();
-  if(at_best.points < best.points) best = at_best;
+  best = findBest(best);
   for(let i = 0; i < ship.length; i++){
     ship[i].crossOver(best);
     ship[i].mutate();
   }
 }
 
-function findBest(){
-  let at_best = ship[0];
-  let bestId = 0;
+function findBest(at_best){
+  //let bestId = 0;
   for(let i = 0; i < ship.length; i++){
-    if(ship[i].points < at_best.points ){
+    if(ship[i].points <= at_best.points ){
       at_best = ship[i];
-      bestId = i;
+      //bestId = i;
     }
   }
   return at_best;

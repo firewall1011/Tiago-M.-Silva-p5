@@ -3,10 +3,8 @@ class Ship{
     this.pos = createVector(width/30, height/2);
     this.points = 0;
     this.death = false;
-    this.moveset = _moveSet;
     this.size = 20;
-    this.first = _first;
-    this.k = 0;
+    this.md = [];
   }
 
   show(){
@@ -15,118 +13,109 @@ class Ship{
     rect(this.pos.x, this.pos.y, this.size, this.size);
   }
 
+  initialize_md(){
+    this.md.push(floor(random(0, 100/7)));
+    for(let i = 0; i < 7; i++){
+      this.md.push(floor(random(this.md[i], 100)));
+    }
+  }
+
   move(){
     if(!this.death){
-      if(this.first){
-        let dir = floor(random(8));
-        this.moveDir(dir);
-        this.moveset.push(dir);
-        this.point_counter();
-        this.outBorders();
-        return;
-      }
-      else{
-        if(this.k < this.moveset.length){
-          this.moveDir(this.moveset[this.k]);
-          this.k++;
-          this.point_counter();
-          this.outBorders();
-        }
-        else{
-          this.first = true;
-        }
-      }
+      let dir = floor(random(0, 101));
+      //let dir = random(0, 1001)%101;
+      this.moveDir(dir);
+      this.point_counter();
+      this.outBorders();
+      this.win(fruit);
+      return;
     }
   }
 
   crossOver(_best){
-    //Fundir o minimo de passos possíveis
-    let Num = min_max(_best.moveset.length, this.moveset.length);
-    let n = 0;
-    for(let i = 0; i < Num; i++){
-      n = floor((this.moveset[i] + _best.moveset[i]) / 2);
-      this.moveset[i] = constrain(n, 0, 7);
+    for(let i = 0; i < this.md.length; i++){
+      this.md[i] = (this.md[i]+_best.md[i]) / 2;
+      this.mutate(i);
     }
-    this.moveset.slice(0, Num);
     this.reset();
   }
 
-  mutate(){
-    for(let i = 0; i < this.moveset.length; i++){
-      this.moveset[i] = floor(this.moveset[i] + random(0, 7)) % 8;
-    }
+  mutate(i){
+    let mutation = floor(random(-10, 10));
+    //let mutation = random(0, 1001)%6;
+    this.md[i] += mutation;
   }
 
   point_counter(){
     this.points = dist(this.pos.x, this.pos.y, objective.x, objective.y);
-    this.points += floor(this.moveset.length/1000);
   }
 
   outBorders(){
-    if(this.collision(0, 0, 0, height) || this.collision(0, 0, width, 0) || this.collision(0, height, width, 0)){
+    if(this.collision(0, 0, 0, height) || this.collision(0, 0, width, 0) || this.collision(0, height, width, 0) || this.collision(width, 0, 0, height)){
       this.death = true;
+      this.points += deathP;
+      console.log("dead");
+    }
+  }
+
+  win(wobjective){
+    if(this.collision(wobjective.pos.x, wobjective.pos.y, wobjective.size.x, wobjective.size.y)){
+      this.death = true;
+      this.points -= deathP*2;
+      console.log("win");
     }
   }
 
   collision(objx, objy, objsx, objsy){
-    return (this.x > objx + objsx || this.x + this.size < objx || this.y + this.size < objy || this.y > objy + objsy);
+    return !(this.pos.x > objx + objsx || this.pos.x + this.size < objx || this.pos.y + this.size < objy || this.pos.y > objy + objsy);
   }
 
 
 
   moveDir(dir){
     let speed;
-    switch(dir){
-      case 0:
+    //switch(dir){
+      if(dir > 0 && dir <= this.md[0])
         //North
         speed = createVector(0, -1);
-      break;
 
-      case 1:
+      else if(dir <= this.md[1])
         //North-east
         speed = createVector(1, -1);
-      break;
 
-      case 2:
+        else if(dir <= this.md[2])
         //East
         speed = createVector(1, 0);
-      break;
 
-      case 3:
+        else if(dir <= this.md[3])
         //South-east
         speed = createVector(1, 1);
-      break;
 
-      case 4:
+      else if(dir <= this.md[4])
         //South
         speed = createVector(0, 1);
-      break;
 
-      case 5:
+      else if(dir <= this.md[5])
         //South-west
         speed = createVector(-1, 1);
-      break;
 
-      case 6:
+      else if(dir <= this.md[6])
         //West
         speed = createVector(-1, 0);
-      break;
 
-      case 7:
+      else if(dir <= this.md[7] && dir < 101)
         //North-west
         speed = createVector(-1, -1);
-      break;
-    }
+    //}
+    else speed = createVector(0, 0);
     this.pos.add(speed);
   }
 
   reset(){
     //Reseting Data
-    this.k = 0;
     this.points = 0;
-    this.pos = createVector(this.size*2, height/2);
+    this.pos = createVector(width/30, height/2);
     this.death = false;
-    this.first = false;
   }
 
 
