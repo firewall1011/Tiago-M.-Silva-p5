@@ -1,5 +1,5 @@
 class Ship{
-  constructor(_moveSet, _first){
+  constructor(){
     this.pos = createVector(width/30, height/2);
     this.points = 0;
     this.death = false;
@@ -25,7 +25,7 @@ class Ship{
       let dir = floor(random(0, 101));
       //let dir = random(0, 1001)%101;
       this.moveDir(dir);
-      this.point_counter();
+      this.point_counter(fruit);
       this.outBorders();
       this.win(fruit);
       return;
@@ -46,15 +46,13 @@ class Ship{
     this.md[i] += mutation;
   }
 
-  point_counter(){
-    this.points = dist(this.pos.x, this.pos.y, objective.x, objective.y);
+  point_counter(wobjective){
+    this.points = dist(this.pos.x, this.pos.y, wobjective.pos.x, wobjective.pos.y);
   }
 
   outBorders(){
     if(this.collision(0, 0, 0, height) || this.collision(0, 0, width, 0) || this.collision(0, height, width, 0) || this.collision(width, 0, 0, height)){
-      this.death = true;
-      this.points += deathP;
-      console.log("dead");
+      this.die();
     }
   }
 
@@ -66,6 +64,12 @@ class Ship{
     }
   }
 
+  hitObs(obs){
+    if(this.collision(obs.pos.x, obs.pos.y, obs.size.x, obs.size.y)){
+      this.die();
+    }
+  }
+
   collision(objx, objy, objsx, objsy){
     return !(this.pos.x > objx + objsx || this.pos.x + this.size < objx || this.pos.y + this.size < objy || this.pos.y > objy + objsy);
   }
@@ -74,6 +78,7 @@ class Ship{
 
   moveDir(dir){
     let speed;
+    let speedf = 1;
     //switch(dir){
       if(dir > 0 && dir <= this.md[0])
         //North
@@ -108,6 +113,7 @@ class Ship{
         speed = createVector(-1, -1);
     //}
     else speed = createVector(0, 0);
+    speed.mult(speedf);
     this.pos.add(speed);
   }
 
@@ -116,6 +122,12 @@ class Ship{
     this.points = 0;
     this.pos = createVector(width/30, height/2);
     this.death = false;
+  }
+
+  die(){
+    this.death = true;
+    this.points += deathP;
+    console.log("dead");
   }
 
 

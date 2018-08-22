@@ -1,8 +1,8 @@
 var ship = [];
+var obstacles = [];
 var population = 20;
-var moveset = [];
+var numObs = 3;
 var run_time = 240;
-var objective;
 var best;
 var generation = 0;
 var counter = 0;
@@ -11,15 +11,27 @@ var fruit;
 
 function setup() {
   createCanvas(800, 400);
-  objective = createVector(width-20, height/2);
+  //Generating initial population
   for(let i = 0; i < population; i++){
-    ship.push(new Ship(moveset, true));
+    ship.push(new Ship());
     ship[i].initialize_md();
   }
+
+  //Generating objective(fruit)
   let size = createVector(20, 20);
   let pos = createVector(width-20, height/2);
   let color = [0, 100, 0];
   fruit = new Objective(pos, size, color);
+
+  //Generating obstacles
+  for(let i = 0; i < numObs; i++){
+    size = createVector(random(5, 20), random(5, 30));
+    pos = createVector(random(width/3, width), random(height-size.y));
+    color = [0];
+    obstacles.push(new Objective(pos, size, color));
+  }
+
+  //Initializing best
   best = ship[0];
   best.points = 100000000;
 }
@@ -30,6 +42,10 @@ function draw() {
   for(let i = 0; i < ship.length; i++){
     ship[i].move();
     ship[i].show();
+    for(let j = 0; j < obstacles.length; j++){
+      obstacles[j].show();
+      ship[i].hitObs(obstacles[j]);
+    }
   }
   counter++;
   reset();
@@ -37,7 +53,9 @@ function draw() {
 }
 
 function reset(){
-  if(counter % run_time == 0){
+  let deadss = 0;
+  for(let i = 0; i < ship.length; i++) if(ship[i].death) deadss++;
+  if(counter % run_time == 0 || deadss == ship.length){
     generationCrossOver();
     generation++;
     counter = 0;
