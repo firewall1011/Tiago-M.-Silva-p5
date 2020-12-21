@@ -11,7 +11,7 @@ var text_;
 var Description = 'Voce eh uma centopeia, seu objetivo eh alcançar seus 100 pés, desbloqueando seu poder (1, 2, 3)';
 
 function setup() {
-  createCanvas(1000, 800);
+  createCanvas(1000, 600);
   snake = new Snake(s);
   frameRate(gameSpeed);
   food = createVector(this.x, this.y);

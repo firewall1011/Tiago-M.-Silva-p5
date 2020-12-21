@@ -1,22 +1,26 @@
 class Ship{
-  constructor(){
+  constructor(_color = 100){
     this.pos = createVector(width/30, height/2);
     this.points = 0;
     this.death = false;
     this.size = 20;
-    this.md = [];
+    this.md = []; //Move direction
+    this.mdo = [];
+    this.color = _color;
   }
 
   show(){
     stroke(255);
-    fill(100);
+    fill(this.color);
     rect(this.pos.x, this.pos.y, this.size, this.size);
   }
 
   initialize_md(){
     this.md.push(floor(random(0, 100/7)));
+    this.mdo.push(floor(random(0, 100/7)));
     for(let i = 0; i < 7; i++){
       this.md.push(floor(random(this.md[i], 100)));
+      this.mdo.push(floor(random(this.md[i], 100)));
     }
   }
 
@@ -41,7 +45,7 @@ class Ship{
   }
 
   mutate(i){
-    let mutation = floor(random(-10, 10));
+    let mutation = floor(random(-5, 5));
     //let mutation = random(0, 1001)%6;
     this.md[i] += mutation;
   }
@@ -59,14 +63,19 @@ class Ship{
   win(wobjective){
     if(this.collision(wobjective.pos.x, wobjective.pos.y, wobjective.size.x, wobjective.size.y)){
       this.death = true;
-      this.points -= deathP*2;
-      console.log("win");
+      this.points -= deathP*5;
     }
   }
 
   hitObs(obs){
     if(this.collision(obs.pos.x, obs.pos.y, obs.size.x, obs.size.y)){
       this.die();
+    }
+  }
+
+  nearObject(obstacles){
+    for(let i = 0; i < obstacles.size; i++){
+      if(this.pos.x)
     }
   }
 
@@ -78,7 +87,6 @@ class Ship{
 
   moveDir(dir){
     let speed;
-    let speedf = 1;
     //switch(dir){
       if(dir > 0 && dir <= this.md[0])
         //North
@@ -127,7 +135,6 @@ class Ship{
   die(){
     this.death = true;
     this.points += deathP;
-    console.log("dead");
   }
 
 
